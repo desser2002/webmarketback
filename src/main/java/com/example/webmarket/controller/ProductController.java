@@ -19,4 +19,10 @@ public class ProductController {
     public List<Product> addProducts(@RequestBody List<Product> products) {
         return productRepository.saveAll(products);
     }
+    // Получение всех продуктов
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
 }
