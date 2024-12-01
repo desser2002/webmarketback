@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("api/products")
 public class ProductController {
 
@@ -20,6 +21,7 @@ public class ProductController {
         return productRepository.saveAll(products);
     }
     // Получение всех продуктов
+    @CrossOrigin(origins = "*")
     @GetMapping
     public List<Product> getAllProducts() {
         return productRepository.findAll();
