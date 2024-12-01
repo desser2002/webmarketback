@@ -35,12 +35,20 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
             String token = jwtTokenProvider.generateToken(authentication);
-            return ResponseEntity.ok(new JwtResponse(token));
+
+            // Получаем пользователя и его id
+            User user = userService.findByUsernameOrThrow(request.getUsername());
+
+            // Возвращаем токен и id пользователя
+            JwtResponse response = new JwtResponse(token, user.getId());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid username or password");
         }
     }
+
+
 
 
     @PostMapping("/register")
