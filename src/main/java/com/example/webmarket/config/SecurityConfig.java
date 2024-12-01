@@ -34,7 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/products", "/login", "/register").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/products", "/login", "/register","/api/cart/add").permitAll()
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(request -> {
