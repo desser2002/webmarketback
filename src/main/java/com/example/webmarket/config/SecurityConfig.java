@@ -33,9 +33,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Включаем CORS
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/auth/login","/api/auth/register", "/login", "/register").permitAll()
+                                .requestMatchers("/api/auth/login", "/api/auth/register", "/login", "/register").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
@@ -46,6 +47,18 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider());
 
         return http.build();
+    }
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000"); // Разрешаем запросы с вашего фронтенда
+        configuration.addAllowedMethod("*"); // Разрешаем все HTTP-методы (GET, POST и т.д.)
+        configuration.addAllowedHeader("*"); // Разрешаем любые заголовки
+        configuration.setAllowCredentials(true); // Разрешаем отправку cookie или авторизационных заголовков
+
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

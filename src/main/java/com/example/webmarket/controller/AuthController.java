@@ -31,11 +31,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UserDataRequest request) {
         try {
+            // Аутентификация пользователя
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
+
+            // Генерация JWT токена
             String token = jwtTokenProvider.generateToken(authentication);
-            return ResponseEntity.ok(new JwtResponse(token));
+
+            // Получение информации о пользователе
+            User user = userService.findByUsername(request.getUsername());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            // Возврат токена и ID пользователя
+            return ResponseEntity.ok(new JwtResponse(token, user.getId()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid username or password");
