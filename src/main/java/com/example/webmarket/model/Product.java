@@ -1,23 +1,25 @@
 package com.example.webmarket.model;
 
 import lombok.Data;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 
 @Entity
-@Data // Lombok аннотация для генерации геттеров и сеттеров
+@Data
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private Double price;
     private Integer rating;
     private Integer reviewCount;
     private String imageUrl;
     private String discount;
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // Поле user_id в таблице product
+    private User user; // Связь с пользователем
 }
