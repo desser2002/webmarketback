@@ -40,7 +40,7 @@ public class CartController {
 
         Product product = new Product();
         product.setId(productId);
-
+        System.out.println("ITEMS REMOVED");
         cartService.removeItem(user, product);
         return ResponseEntity.ok("Item removed successfully");
     }

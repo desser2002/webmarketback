@@ -1,5 +1,6 @@
 package com.example.webmarket.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import jakarta.persistence.*;
 
@@ -20,6 +21,7 @@ public class Product {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false) // Поле user_id в таблице product
     private User user; // Связь с пользователем
 }

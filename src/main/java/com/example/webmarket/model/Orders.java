@@ -23,6 +23,9 @@ public class Orders {
     @Column(nullable = false, length = 50)
     private String status;
 
+    @Column(nullable = false)
+    private Integer amount; // Новое поле для количества товара
+
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;
@@ -30,4 +33,8 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 }
