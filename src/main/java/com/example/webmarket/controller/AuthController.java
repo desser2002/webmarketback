@@ -12,8 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -34,21 +32,21 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
+
             String token = jwtTokenProvider.generateToken(authentication);
 
-            // Получаем пользователя и его id
-            User user = userService.findByUsernameOrThrow(request.getUsername());
+            User user = userService.findByUsername(request.getUsername());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
 
-            // Возвращаем токен и id пользователя
-            JwtResponse response = new JwtResponse(token, user.getId());
-            return ResponseEntity.ok(response);
+            // Возвращаем токен, ID пользователя и роль
+            return ResponseEntity.ok(new JwtResponse(token, user.getId(), user.getRole()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid username or password");
         }
     }
-
-
 
 
     @PostMapping("/register")
@@ -59,8 +57,28 @@ public class AuthController {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
-        user.setRole("USER");
+        user.setRole(request.getRole() != null && request.getRole().equalsIgnoreCase("SELLER") ? "SELLER" : "USER");
         userService.saveUser(user);
         return ResponseEntity.ok("User registered successfully!");
+    }
+
+    @PutMapping("/change-role/{username}")
+    public ResponseEntity<?> changeUserRoleToAdmin(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        user.setRole("ADMIN");
+        userService.saveUser(user);
+        return ResponseEntity.ok("User role updated to ADMIN successfully!");
+    }
+
+    @GetMapping("/role/{username}")
+    public ResponseEntity<?> getUserRole(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        return ResponseEntity.ok("User role: " + user.getRole());
     }
 }

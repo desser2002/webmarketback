@@ -6,11 +6,13 @@ import java.time.LocalDate;
 
 @Data
 public class OrderDTO {
-
-    private Long id;            // ID заказа
-    private LocalDate data;     // Дата заказа
-    private Float price;        // Цена заказа
-    private String status;      // Статус заказа
-    private Long sellerId;      // ID продавца
-    private Long userId;        // ID покупателя
+    private Long id;
+    private LocalDate data;
+    private Float price;
+    private String status;
+    private Long sellerId;
+    private Long userId;
+    private Long amount;
+    private Long productId; // ID продукта
 }
+

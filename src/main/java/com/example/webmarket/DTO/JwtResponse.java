@@ -2,14 +2,15 @@ package com.example.webmarket.DTO;
 
 public class JwtResponse {
     private String token;
-    private Long id; // Поле для хранения ID пользователя
+    private Long userId;
+    private String role; // Добавлено поле для роли
 
-    public JwtResponse(String token, Long id) {
+    public JwtResponse(String token, Long userId, String role) {
         this.token = token;
-        this.id = id;
+        this.userId = userId;
+        this.role = role;
     }
 
-    // Геттеры и сеттеры
     public String getToken() {
         return token;
     }
@@ -18,11 +19,19 @@ public class JwtResponse {
         this.token = token;
     }
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

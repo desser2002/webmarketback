@@ -1,12 +1,15 @@
 package com.example.webmarket.controller;
 
 import com.example.webmarket.DTO.OrderDTO;
+
 import com.example.webmarket.model.Orders;
 import com.example.webmarket.services.OrdersService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -35,8 +38,36 @@ public class OrdersController {
 
     // Эндпоинт для получения заказов по ID продавца
     @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<List<Orders>> getOrdersBySellerId(@PathVariable Long sellerId) {
-        List<Orders> orders = ordersService.getOrdersBySellerId(sellerId);
-        return ResponseEntity.ok(orders);
+    public ResponseEntity<List<OrderDTO>> getOrdersBySellerId(@PathVariable Long sellerId) {
+        List<OrderDTO> orderDTOs = ordersService.getOrdersDTOBySellerId(sellerId); // Вызов нового метода сервиса
+        return ResponseEntity.ok(orderDTOs);
     }
+
+
+    @PostMapping("/processPayment")
+    public ResponseEntity<?> processPayment(@RequestParam Long userId) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required.");
+        }
+
+        ordersService.processPayment(userId);
+        return ResponseEntity.ok("Payment processed successfully");
+    }
+
+    // Эндпоинт для обновления статуса заказа
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> statusUpdate) {
+        String newStatus = statusUpdate.get("newStatus");
+        if (newStatus == null || newStatus.isEmpty()) {
+            return ResponseEntity.badRequest().body("New status is required");
+        }
+
+        try {
+            ordersService.updateOrderStatus(id, newStatus);
+            return ResponseEntity.ok("Order status updated successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 }
